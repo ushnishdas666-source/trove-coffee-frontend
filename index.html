@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trove Coffee & More - Best Cafe in Kolkata</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior-y: none; /* Prevents scroll chaining */
+        }
+        .font-serif-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .hero-bg {
+            background-image: linear-gradient(135deg, rgba(74, 55, 40, 0.85), rgba(99, 72, 50, 0.75)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Creates the base parallax effect */
+        }
+        
+        /* -- ADVANCED ANIMATIONS -- */
+        .slide-in-left, .slide-in-right, .card-anim, .fade-up {
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.19, 1, 0.22, 1), transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .slide-in-left { transform: translateX(-100px) rotate(-5deg); }
+        .slide-in-right { transform: translateX(100px) rotate(5deg); }
+        .fade-up { transform: translateY(80px); }
+        
+        .slide-in-left.visible, .slide-in-right.visible, .card-anim.visible, .fade-up.visible {
+            opacity: 1;
+            transform: translateX(0) translateY(0) rotate(0deg);
+        }
+
+        /* Nav link underline with more flair */
+        .nav-link {
+            position: relative;
+            padding-bottom: 5px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #A17C5B;
+            transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* UPDATED: More pronounced button glow and interaction */
+        .btn-glow {
+            background: linear-gradient(135deg, #A17C5B 0%, #634832 50%, #A17C5B 100%);
+            background-size: 250% 250%;
+            background-position: 50% 50%;
+            transition: box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1), transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background-position 0.6s ease;
+        }
+        .btn-glow:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(161, 124, 91, 0.7);
+            background-position: 100% 50%;
+        }
+
+        /* 3D Menu Card Animation & Hover Effect */
+        .card-anim {
+            transform: perspective(1200px) rotateY(-70deg) translateX(-80px);
+            transform-origin: left center;
+            transition: opacity 1.5s cubic-bezier(0.19, 1, 0.22, 1), transform 1.5s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease;
+        }
+        .card-anim.visible {
+            transform: perspective(1200px) rotateY(0deg) translateX(0);
+        }
+        .card-anim:hover {
+            transform: translateY(-12px) rotateY(0deg) scale(1.03) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Gallery Image Hover Effect with more depth */
+        .gallery-image-wrapper {
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .gallery-image-wrapper:hover {
+             transform: scale(1.05);
+        }
+        .gallery-image {
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .group:hover .gallery-image {
+            transform: scale(1.2) rotate(2deg);
+        }
+
+        /* Modal Animation */
+        #image-modal.visible { opacity: 1; }
+        #image-modal.visible > div { transform: scale(1); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
+        
+        /* UPDATED: Menu item styling and hover highlight */
+        .menu-item-clickable {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 0.25rem;
+            border-left: 3px solid transparent;
+            padding: 4px 8px;
+        }
+        .menu-item-clickable:hover {
+            background-color: #d7c8b8; /* Soft milky coffee highlight */
+            border-left-color: #8a684c; /* Accent color border */
+            transform: translateX(5px);
+            color: #4A3728;
+        }
+        .menu-item-clickable:hover span { /* Target all spans within the hovered item */
+            color: #4A3728 !important; /* Ensure all text including price changes color */
+        }
+        
+        /* --- NEW: Hero Animation "Liquid Fill" --- */
+        #hero-title {
+            position: relative;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+            color: transparent;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+        }
+        #hero-title::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #fffde4;
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+            transition: clip-path 1.5s cubic-bezier(0.76, 0, 0.24, 1) 0.5s; /* Added delay */
+        }
+        #hero-title.visible::before {
+             clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
+        }
+
+        /* Added for hero animation sequencing */
+        .hero-text-content > p {
+             transition-delay: 1.2s;
+             text-shadow: 1px 1px 8px rgba(0,0,0,0.9);
+        }
+         .hero-text-content > a {
+             transition-delay: 1.4s;
+        }
+
+        /* Loader for submission button */
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #A17C5B;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body class="bg-[#F8F5F2] text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header id="header" class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="font-serif-display text-2xl font-bold text-[#4A3728]">Trove Coffee & More</a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link text-gray-600 hover:text-[#A17C5B] transition duration-300">About</a>
+                <a href="#gallery" class="nav-link text-gray-600 hover:text-[#A17C5B] transition duration-300">Gallery</a>
+                <a href="#menu" class="nav-link text-gray-600 hover:text-[#A17C5B] transition duration-300">Menu</a>
+                <a href="#reservation" class="nav-link text-gray-600 hover:text-[#A17C5B] transition duration-300">Reservation</a>
+                <a href="#contact" class="nav-link text-gray-600 hover:text-[#A17C5B] transition duration-300">Contact</a>
+            </nav>
+            <a href="#reservation" class="btn-glow hidden md:block text-white py-2 px-5 rounded-full">Book a Table</a>
+            <button id="mobile-menu-btn" class="md:hidden text-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#about" class="block py-2 text-gray-600 hover:text-[#A17C5B]">About</a>
+            <a href="#gallery" class="block py-2 text-gray-600 hover:text-[#A17C5B]">Gallery</a>
+            <a href="#menu" class="block py-2 text-gray-600 hover:text-[#A17C5B]">Menu</a>
+            <a href="#reservation" class="block py-2 text-gray-600 hover:text-[#A17C5B]">Reservation</a>
+            <a href="#contact" class="block py-2 text-gray-600 hover:text-[#A17C5B]">Contact</a>
+            <a href="#reservation" class="block mt-2 btn-glow text-white text-center py-2 px-5 rounded-full">Book a Table</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg h-screen flex items-center justify-center text-white text-center">
+        <div class="hero-text-content relative z-10 p-6 md:p-10 max-w-3xl mx-auto text-center">
+            <h1 id="hero-title"
+                class="font-serif-display text-5xl md:text-7xl font-bold leading-tight fade-up"
+                data-text="Trove Coffee & More">
+                Trove Coffee & More
+            </h1>
+            <p class="mt-6 text-lg md:text-xl text-gray-100 fade-up">
+                Discover your new favourite corner. The best café in Kolkata.
+            </p>
+            <a href="#reservation"
+               class="btn-glow mt-8 inline-block text-white py-3 px-8 rounded-full text-lg font-semibold transition duration-300 fade-up">
+               Reserve Your Seat
+            </a>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-6 py-16 md:py-24 space-y-24">
+        <!-- About Us Section -->
+        <section id="about" class="flex flex-col md:flex-row items-center gap-12 slide-in-left">
+            <div class="md:w-1/2">
+                <img src="d:\vs code studio\python storage\Screenshot 2025-10-02 012254.png" alt="Trove Coffee Shop Interior" class="rounded-lg shadow-xl w-full h-auto" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d7c8b8/4A3728?text=Our+Interior';">
+            </div>
+            <div class="md:w-1/2">
+                <h2 class="font-serif-display text-4xl font-bold text-[#4A3728] mb-4">A Treasure in Kolkata</h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">Trove Coffee & More was born from a simple love for exceptional coffee and heartfelt conversations. Nestled in the vibrant heart of Kolkata, we've created a sanctuary where every cup tells a story and every guest feels like family. Our beans are sourced ethically, roasted locally, and brewed with passion by our expert baristas.</p>
+                <p class="text-gray-600 leading-relaxed">We're more than just a coffee shop; we're a community hub, a quiet place to work, and a warm spot to unwind. Welcome to your treasure trove of flavours and comfort.</p>
+            </div>
+        </section>
+        
+        <!-- Gallery Section -->
+        <section id="gallery" class="text-center slide-in-right">
+            <h2 class="font-serif-display text-4xl font-bold text-[#4A3728] mb-2">A Glimpse of Trove</h2>
+            <p class="text-gray-600 mb-12 max-w-2xl mx-auto">Explore the moments and flavours that make us special.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\cafe piC  6.jpg" alt="Noodles served at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\cafe pic 1.jpg" alt="A slice of cake at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\cafe piC 7.jpg" alt="Freshly baked pizza at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\cafe piC 8.jpg" alt="A dish of pasta at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\cafe piC 10.jpg" alt="An appetizer at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\unnamed (6).jpg" alt="A dessert served at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\unnamed (7).jpg" alt="A selection of colorful drinks at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\unnamed (4).jpg" alt="A watermelon mojito at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+                 <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper sm:col-span-1 lg:col-span-2">
+                    <img src="d:\vs code studio\python storage\unnamed (5).jpg" alt="Grilled chicken dish at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-video sm:aspect-square lg:aspect-video" onerror="this.onerror=null;this.src='https://placehold.co/800x400/d7c8b8/4A3728?text=Signature+Dish';">
+                </div>
+                 <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
+                    <img src="d:\vs code studio\python storage\unnamed (8).jpg" alt="A refreshing drink at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="text-center slide-in-left">
+            <h2 class="font-serif-display text-4xl font-bold text-[#4A3728] mb-2">Our Curated Menu</h2>
+            <p class="text-gray-600 mb-12 max-w-2xl mx-auto">Crafted with care, from classic brews to delightful bites. Click on items to see a preview!</p>
+
+            <div class="space-y-12">
+                <!-- Beverages -->
+                <div>
+                    <h3 class="font-serif-display text-3xl font-bold text-[#634832] mb-8">Beverages</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Hot Coffee</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Espresso" class="menu-item-clickable flex justify-between"><span>Espresso (Single Shot)</span> <span>₹115</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Doppio" class="menu-item-clickable flex justify-between"><span>Doppio (Double Shot)</span> <span>₹155</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Flat+White" class="menu-item-clickable flex justify-between"><span>Flat White</span> <span>₹185</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Americano" class="menu-item-clickable flex justify-between"><span>Americano</span> <span>₹165</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Macchiato" class="menu-item-clickable flex justify-between"><span>Macchiato</span> <span>₹185</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Caffe+Latte" class="menu-item-clickable flex justify-between"><span>Caffe Latte</span> <span>₹185</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Cappuccino" class="menu-item-clickable flex justify-between"><span>Cappuccino</span> <span>₹185</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Caffe+Mocha" class="menu-item-clickable flex justify-between"><span>Caffe Mocha</span> <span>₹195</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Cafe+Breve" class="menu-item-clickable flex justify-between"><span>Cafe Breve</span> <span>₹195</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Irish+Cappuccino" class="menu-item-clickable flex justify-between"><span>Irish Flavoured Cappuccino</span> <span>₹205</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 100ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Cold Coffee</h4>
+                             <ul class="space-y-2 text-sm">
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Iced+Latte" class="menu-item-clickable flex justify-between"><span>Iced Latte</span> <span>₹195</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Affogato" class="menu-item-clickable flex justify-between"><span>Affogato</span> <span>₹195</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Espresso+on+Rocks" class="menu-item-clickable flex justify-between"><span>Espresso on the Rocks</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Frappuccino" class="menu-item-clickable flex justify-between"><span>Frappuccino</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Espresso+Cold+Foam" class="menu-item-clickable flex justify-between"><span>Espresso Cold Milk Foam</span> <span>₹215</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 200ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Mocktails</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Blue+Lagoon" class="menu-item-clickable flex justify-between"><span>Blue Lagoon</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Green+Apple" class="menu-item-clickable flex justify-between"><span>Green Apple</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Orange+Delight" class="menu-item-clickable flex justify-between"><span>Orange Delight</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Spicy+Guava" class="menu-item-clickable flex justify-between"><span>Spicy Guava</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Watermelon+Mojito" class="menu-item-clickable flex justify-between"><span>Watermelon Mojito</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Green+Apple+Mojito" class="menu-item-clickable flex justify-between"><span>Green Apple Mojito</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Virgin+Mojito" class="menu-item-clickable flex justify-between"><span>Virgin Mojito</span> <span>₹215</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Kiwi+Delight" class="menu-item-clickable flex justify-between"><span>Kiwi Delight</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Strawberry+Bubble" class="menu-item-clickable flex justify-between"><span>Strawberry Bubble</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mango+Tango" class="menu-item-clickable flex justify-between"><span>Mango Tango</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Peach+Paradise" class="menu-item-clickable flex justify-between"><span>Peach Paradise</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Litchi+Surprise" class="menu-item-clickable flex justify-between"><span>Litchi Surprise</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Trove's+Twilight" class="menu-item-clickable flex justify-between"><span>Trove's Twilight</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Trove's+Signature" class="menu-item-clickable flex justify-between"><span>Trove's Signature</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Trove's+Special" class="menu-item-clickable flex justify-between"><span>Trove's Special</span> <span>₹255</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 0ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Shakes</h4>
+                            <ul class="space-y-2 text-sm">
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Oreo+Shake" class="menu-item-clickable flex justify-between"><span>Oreo Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Kitkat+Shake" class="menu-item-clickable flex justify-between"><span>Kitkat Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Snickers+Banana" class="menu-item-clickable flex justify-between"><span>Snickers Banana Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Strawberry+Shake" class="menu-item-clickable flex justify-between"><span>Strawberry Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Black+Currant" class="menu-item-clickable flex justify-between"><span>Black Currant Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Brownie+Shake" class="menu-item-clickable flex justify-between"><span>Brownie Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mango+Shake" class="menu-item-clickable flex justify-between"><span>Mango Shake</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Fig+Dates+Shake" class="menu-item-clickable flex justify-between"><span>Fig and Dates Shake</span> <span>₹245</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Blueberry+Cheesecake" class="menu-item-clickable flex justify-between"><span>Blueberry Cheesecake Shake</span> <span>₹245</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 100ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Smoothies & Iced Teas</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="font-bold pt-2">Smoothies</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Strawberry+Smoothie" class="menu-item-clickable flex justify-between"><span>Strawberry Smoothie</span> <span>₹245</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mango+Smoothie" class="menu-item-clickable flex justify-between"><span>Mango Smoothie</span> <span>₹245</span></li>
+                                <li class="font-bold pt-2">Iced Teas</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Lemon+Iced+Tea" class="menu-item-clickable flex justify-between"><span>Lemon Iced Tea</span> <span>₹175</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Peach+Iced+Tea" class="menu-item-clickable flex justify-between"><span>Peach Iced Tea</span> <span>₹175</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Strawberry+Iced+Tea" class="menu-item-clickable flex justify-between"><span>Strawberry Iced Tea</span> <span>₹175</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Watermelon+Iced+Tea" class="menu-item-clickable flex justify-between"><span>Watermelon Ice Tea</span> <span>₹175</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Lemon+Mint+Cooler" class="menu-item-clickable flex justify-between"><span>Lemon & Mint Cooler Iced Tea</span> <span>₹175</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food -->
+                <div>
+                    <h3 class="font-serif-display text-3xl font-bold text-[#634832] mb-8">Food</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 200ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Starters</h4>
+                             <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Tandoor (Veg)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Pesto+Paneer+Tikka" class="menu-item-clickable flex justify-between"><span>Pesto Paneer Tikka</span> <span>₹355</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Malai+Chaap" class="menu-item-clickable flex justify-between"><span>Malai Chaap Masala</span> <span>₹355</span></li>
+                                <li class="font-bold pt-2">Tandoor (Chicken)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Lemon+Chicken+Tikka" class="menu-item-clickable flex justify-between"><span>Lemon Coriander Ckn Tikka</span> <span>₹455</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Basil+Pesto+Chicken" class="menu-item-clickable flex justify-between"><span>Basil Pesto Chicken Tikka</span> <span>₹475</span></li>
+                                <li class="font-bold pt-2">Tandoor (Mutton)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mutton+Galouti" class="menu-item-clickable flex justify-between"><span>Mutton Galouti Kebab</span> <span>₹555</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mutton+Boti+Kebab" class="menu-item-clickable flex justify-between"><span>Mutton Boti Kebab</span> <span>₹565</span></li>
+                                <li class="font-bold pt-2">Kebab Platters</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Veg+Platter" class="menu-item-clickable flex justify-between"><span>Veg Platter</span> <span>₹855</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Non-Veg+Platter" class="menu-item-clickable flex justify-between"><span>Non-Veg Platter</span> <span>₹1055</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 0ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Burgers & Sides</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Burgers</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Veggie+Burger" class="menu-item-clickable flex justify-between"><span>Classic Veggie Burger</span> <span>₹295</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Burger" class="menu-item-clickable flex justify-between"><span>Grilled Chicken Patty Burger</span> <span>₹375</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Fish+Burger" class="menu-item-clickable flex justify-between"><span>Crispy Fried Fish Burger</span> <span>₹395</span></li>
+                                <li class="font-bold pt-2">Side Orders</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=French+Fries" class="menu-item-clickable flex justify-between"><span>French Fries</span> <span>₹195</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Garlic+Bread" class="menu-item-clickable flex justify-between"><span>Garlic Bread</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Potato+Pops" class="menu-item-clickable flex justify-between"><span>Chilli Garlic Potato Pops</span> <span>₹225</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Fish+&+Chips" class="menu-item-clickable flex justify-between"><span>Fish & Chips</span> <span>₹495</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Strips" class="menu-item-clickable flex justify-between"><span>Chicken Strips</span> <span>₹395</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 100ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Pasta</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Alfredo+Pasta" class="menu-item-clickable flex justify-between"><span>Alfredo (Veg/Ckn)</span> <span>₹395/455</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Arrabbiata+Pasta" class="menu-item-clickable flex justify-between"><span>Arrabbiata (Veg/Ckn)</span> <span>₹395/455</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Polo+E+Funghi" class="menu-item-clickable flex justify-between"><span>Polo E Funghi (Ckn)</span> <span>₹455</span></li>
+                                <li data-image="d:\vs code studio\python storage\cafepic4.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Aglio+Olio';"><span>Spaghetti Aglio Olio (Veg/Ckn/Prn)</span> <span>₹395/455/495</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Lasagne" class="menu-item-clickable flex justify-between"><span>Lasagne (Veg/Ckn)</span> <span>₹425/475</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Mac+&+Cheese" class="menu-item-clickable flex justify-between"><span>Mac & Cheese (Veg/Ckn)</span> <span>₹395/455</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 200ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Pizza</h4>
+                            <ul class="space-y-2 text-sm">
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Margherita+Pizza" class="menu-item-clickable flex justify-between"><span>Margherita</span> <span>₹395</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Peri+Peri+Paneer" class="menu-item-clickable flex justify-between"><span>Peri Peri Paneer</span> <span>₹455</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Veggie+Supreme" class="menu-item-clickable flex justify-between"><span>Veggie Supreme</span> <span>₹475</span></li>
+                               <li data-image="d:\vs code studio\python storage\cafepic3.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=BBQ+Chicken';"><span>BBQ Chicken</span> <span>₹495</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Paprika" class="menu-item-clickable flex justify-between"><span>Chicken Paprika</span> <span>₹545</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Smoked+Chicken" class="menu-item-clickable flex justify-between"><span>Smoked Chicken</span> <span>₹555</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Pizza+Verde" class="menu-item-clickable flex justify-between"><span>Pizza Verde (Pesto)</span> <span>₹545</span></li>
+                            </ul>
+                        </div>
+                         <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 0ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Continental & Italian</h4>
+                             <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Risotto (Non-Veg)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Risotto" class="menu-item-clickable flex justify-between"><span>Chicken Paprika Risotto</span> <span>₹545</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Creamy+Chicken+Risotto" class="menu-item-clickable flex justify-between"><span>Polo Creamy Chicken Risotto</span> <span>₹555</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Prawn+Risotto" class="menu-item-clickable flex justify-between"><span>Prawn Risotto</span> <span>₹545</span></li>
+                                <li class="font-bold pt-2">Main Course</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Grilled+Whole+Chicken" class="menu-item-clickable flex justify-between"><span>Grilled Marinated Whole Chicken</span> <span>₹595</span></li>
+                                <li data-image="d:\vs code studio\python storage\cafe piC 9.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Grilled+Chicken';"><span>Grilled Breast of Chicken</span> <span>₹555</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Grilled+Fish" class="menu-item-clickable flex justify-between"><span>Grilled Fish w/ Lemon Butter</span> <span>₹595</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Roasted+Herb+Fish" class="menu-item-clickable flex justify-between"><span>Roasted Herb Fish</span> <span>₹595</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Grilled+Cottage+Steak" class="menu-item-clickable flex justify-between"><span>Grilled Cottage Steak</span> <span>₹555</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Baked+Fish" class="menu-item-clickable flex justify-between"><span>Fish Baked w/ Mustard Sauce</span> <span>₹495</span></li>
+                            </ul>
+                        </div>
+                         <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 100ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Chinese</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Starters (Veg)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Spring+Roll" class="menu-item-clickable flex justify-between"><span>Veg Shanghai Spring Roll</span> <span>₹295</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chilli+Babycorn" class="menu-item-clickable flex justify-between"><span>Crispy Chilli Babycorn</span> <span>₹325</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chilli+Paneer" class="menu-item-clickable flex justify-between"><span>Chilli Paneer</span> <span>₹355</span></li>
+                                <li class="font-bold pt-2">Starters (Non-Veg)</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Pepper+Salt" class="menu-item-clickable flex justify-between"><span>Chicken Pepper Salt</span> <span>₹395</span></li>
+                                <li data-image="d:\vs code studio\python storage\cafepic5.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Drums+of+Heaven';"><span>Drums of Heaven</span> <span>₹425</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chilli+Fish" class="menu-item-clickable flex justify-between"><span>Pan Fried Chilli Fish</span> <span>₹475</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Crispy+Chilli+Chicken" class="menu-item-clickable flex justify-between"><span>Crispy Chilli Chicken</span> <span>₹425</span></li>
+                            </ul>
+                        </div>
+                         <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 200ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Chinese Mains</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Rice & Noodles</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Fried+Rice" class="menu-item-clickable flex justify-between"><span>Y. Chow Rice (V/C/M)</span> <span>₹295/345/395</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chilli+Garlic+Rice" class="menu-item-clickable flex justify-between"><span>C. Garlic Rice (V/C/M)</span> <span>₹275/325/375</span></li>
+                                <li data-image="d:\vs code studio\python storage\cafe pic 1.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Hakka+Noodles';"><span>Hakka Noodles (V/C/M)</span> <span>₹275/345/395</span></li>
+                                <li class="font-bold pt-2">Gravy</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Manchurian" class="menu-item-clickable flex justify-between"><span>Manchurian (Veg/Ckn)</span> <span>₹315/395</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Sweet+&+Sour" class="menu-item-clickable flex justify-between"><span>Sweet & Sour (Veg/Ckn)</span> <span>₹315/395</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chilli+Gravy" class="menu-item-clickable flex justify-between"><span>Chilli Gravy (Pnr/Ckn/Fsh/Prn)</span> <span>₹345-525</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Kung+Pao" class="menu-item-clickable flex justify-between"><span>Kung Pao (Veg/Ckn)</span> <span>₹345/425</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 0ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Indian Mini Meals</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="font-bold">Veg</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Dal+Makhani" class="menu-item-clickable flex justify-between"><span>Dal Makhani + Bread</span> <span>₹445</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Veg+Makhanwala" class="menu-item-clickable flex justify-between"><span>Veg Makhanwala + Bread</span> <span>₹355</span></li>
+                                <li class="font-bold pt-2">Non-Veg</li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Butter+Chicken" class="menu-item-clickable flex justify-between"><span>Chicken Butter Masala + Bread</span> <span>₹555</span></li>
+                                <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chicken+Tadka" class="menu-item-clickable flex justify-between"><span>Chicken Tadka Masala + Bread</span> <span>₹555</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 border border-stone-200/60 p-6 rounded-lg shadow-md card-anim" style="transition-delay: 100ms;">
+                            <h4 class="font-serif-display text-xl font-bold text-[#4A3728] mb-4">Desserts</h4>
+                            <ul class="space-y-2 text-sm">
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Tutti+Frutti" class="menu-item-clickable flex justify-between"><span>Tutti Frutti</span> <span>₹195</span></li>
+                               <li data-image="d:\vs code studio\python storage\cafe piC  6.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Shahi+Tukda';"><span>Shahi Tukda</span> <span>₹195</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Walnut+Kheer" class="menu-item-clickable flex justify-between"><span>Walnut Kheer</span> <span>₹195</span></li>
+                               <li data-image="d:\vs code studio\python storage\cafepic2.jpg" class="menu-item-clickable flex justify-between" onerror="this.onerror=null;this.src='https://placehold.co/400x400/634832/F8F5F2?text=Sizzling+Brownie';"><span>Sizzling Brownie w/ Ice Cream</span> <span>₹275</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Chocolate+Bomb" class="menu-item-clickable flex justify-between"><span>Chocolate Bomb w/ Ice Cream</span> <span>₹295</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Hot+Chocolate+Fudge" class="menu-item-clickable flex justify-between"><span>Hot Chocolate Fudge</span> <span>₹245</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Brownie" class="menu-item-clickable flex justify-between"><span>Brownie</span> <span>₹175</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Carrot+Halwa" class="menu-item-clickable flex justify-between"><span>Carrot Halwa</span> <span>₹195</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Tiramisu" class="menu-item-clickable flex justify-between"><span>Tiramisu</span> <span>₹225</span></li>
+                               <li data-image="https://placehold.co/400x400/634832/F8F5F2?text=Milk+Cake" class="menu-item-clickable flex justify-between"><span>Milk Cake</span> <span>₹198</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservation Section -->
+        <section id="reservation" class="slide-in-right">
+            <div class="bg-white p-8 md:p-12 rounded-lg shadow-xl max-w-4xl mx-auto">
+                <div id="form-container">
+                    <h2 class="font-serif-display text-4xl font-bold text-[#4A3728] text-center mb-2">Reserve Your Table</h2>
+                    <p class="text-gray-600 text-center mb-8">Secure your spot for a perfect coffee break.</p>
+                    <form id="reservation-form" class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#A17C5B] focus:border-[#A17C5B]">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#A17C5B] focus:border-[#A17C5B]">
+                        </div>
+                        <div>
+                            <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="date" name="date" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#A17C5B] focus:border-[#A17C5B]">
+                        </div>
+                        <div>
+                            <label for="time" class="block text-sm font-medium text-gray-700">Time</label>
+                            <input type="time" id="time" name="time" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#A17C5B] focus:border-[#A17C5B]">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="guests" class="block text-sm font-medium text-gray-700">Number of Guests</label>
+                            <select id="guests" name="guests" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#A17C5B] focus:border-[#A17C5B]">
+                                <option>1 Person</option>
+                                <option>2 People</option>
+                                <option>3 People</option>
+                                <option>4 People</option>
+                                <option>5 People</option>
+                                <option>6+ People</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2 text-center">
+                            <button id="submit-btn" type="submit" class="btn-glow w-full sm:w-auto mt-4 text-white py-3 px-12 rounded-full text-lg font-semibold transition duration-300 flex items-center justify-center">
+                                <span id="btn-text">Confirm Reservation</span>
+                                <div id="btn-loader" class="loader hidden ml-3"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="message-area" class="hidden mt-6 p-4 rounded-md text-center"></div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="flex flex-col md:flex-row items-center gap-12 slide-in-left">
+             <div class="md:w-1/2">
+                <h2 class="font-serif-display text-4xl font-bold text-[#4A3728] mb-6">Visit Us</h2>
+                <div class="space-y-4 text-gray-600">
+                    <p class="flex items-start">
+                        <svg class="w-6 h-6 mr-3 mt-1 text-[#A17C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>1/1D, 1/1C, Muzaffar Ahmed St, Esplanade, Taltala, Kolkata, West Bengal 700016</span>
+                    </p>
+                    <p class="flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-[#A17C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        <span>+91 6290323734  </span>
+                    </p>
+                    <p class="flex items-center">
+                         <svg class="w-6 h-6 mr-3 text-[#A17C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>hello@trovecoffee.in</span>
+                    </p>
+                </div>
+            </div>
+            <div class="md:w-1/2 h-80 md:h-96">
+                <a href="https://maps.app.goo.gl/P98LqP4fzGBdUNP48" target="_blank" rel="noopener noreferrer">
+                    <img src="d:\vs code studio\python storage\Screenshot 2025-10-02 021908.png" alt="Location of Trove Coffee on map" class="rounded-lg shadow-xl w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d7c8b8/4A3728?text=Our+Location';">
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#4A3728] text-white">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="font-serif-display text-2xl mb-2">Trove Coffee & More</p>
+            <p class="mb-4">&copy; <span id="year"></span> Trove Coffee. All Rights Reserved.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#" aria-label="Facebook" class="hover:opacity-75 transition-opacity duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                </a>
+                 <a href="#" aria-label="Instagram" class="hover:opacity-75 transition-opacity duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.644-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[100] hidden transition-opacity duration-300 ease-in-out opacity-0">
+        <div class="bg-white p-4 rounded-lg shadow-xl max-w-lg w-full relative transform transition-transform duration-300 ease-in-out scale-95">
+            <button id="modal-close-btn" class="absolute -top-4 -right-4 bg-white rounded-full p-2 text-gray-800 hover:bg-gray-200 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <img id="modal-image" src="" alt="Menu Item" class="w-full h-auto max-h-[80vh] object-contain rounded-md">
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- MOBILE MENU ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // --- FOOTER YEAR ---
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- SMOOTH SCROLLING ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if(targetElement) {
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // --- HEADER SHRINK ---
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('py-2');
+            header.classList.remove('py-4');
+        } else {
+            header.classList.add('py-4');
+            header.classList.remove('py-2');
+        }
+    });
+
+    // --- INTERSECTION OBSERVER FOR ANIMATIONS ---
+    const animatedElements = document.querySelectorAll('.slide-in-left, .slide-in-right, .card-anim, .fade-up, #hero-title');
+    const appearOptions = {
+        threshold: 0.15, 
+        rootMargin: "0px 0px -80px 0px" 
+    };
+    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.classList.remove('visible');
+            }
+        });
+    }, appearOptions);
+    animatedElements.forEach(element => {
+        appearOnScroll.observe(element);
+    });
+
+     // --- IMAGE MODAL LOGIC ---
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const menuItems = document.querySelectorAll('[data-image]');
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const imageSrc = item.getAttribute('data-image');
+            modalImage.src = imageSrc;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('visible'), 10);
+        });
+    });
+    function closeModal() {
+        modal.classList.remove('visible');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+    modalCloseBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // --- RESERVATION FORM LOGIC ---
+    const form = document.getElementById('reservation-form');
+    const messageArea = document.getElementById('message-area');
+    const formContainer = document.getElementById('form-container');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoader = document.getElementById('btn-loader');
+
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    }
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        btnText.textContent = 'Booking...';
+        btnLoader.classList.remove('hidden');
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        const reservationData = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('https://trove-coffee-frontend.onrender.com', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reservationData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'An unknown server error occurred.');
+            }
+            
+            const dateObj = new Date(reservationData.date + 'T00:00:00');
+            const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(dateObj);
+            
+            messageArea.className = 'p-4 bg-green-100 border border-green-400 text-green-700 rounded-md text-center';
+            messageArea.innerHTML = `<p class="font-bold">Thank you, ${reservationData.name}!</p><p>Your reservation for ${reservationData.guests.toLowerCase()} on ${formattedDate} at ${reservationData.time} is confirmed.</p>`;
+            formContainer.classList.add('hidden');
+
+        } catch (error) {
+            messageArea.className = 'p-4 bg-red-100 border border-red-400 text-red-700 rounded-md text-center';
+            messageArea.innerHTML = `<p class="font-bold">Booking Failed</p><p>${error.message}</p>`;
+        
+        } finally {
+            messageArea.classList.remove('hidden');
+            btnText.textContent = 'Confirm Reservation';
+            btnLoader.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+    });
+});
+</script>
+
+</body>
+</html>
+
