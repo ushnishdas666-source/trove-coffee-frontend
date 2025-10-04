@@ -251,7 +251,7 @@
                     <img src="d:\vs code studio\python storage\unnamed (7).jpg" alt="A selection of colorful drinks at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
                 </div>
                 <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper">
-                    <img src="d:\vs code studio\python storage\unnamed (4).jpg" alt="A watermelon mojito at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
+                    <img src="D:\trove-coffee-frontend\images\cafe pic4.jpg" alt="A watermelon mojito at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-square" onerror="this.onerror=null;this.src='https://placehold.co/400x400/d7c8b8/4A3728?text=Food+Item';">
                 </div>
                  <div class="overflow-hidden rounded-lg shadow-lg group gallery-image-wrapper sm:col-span-1 lg:col-span-2">
                     <img src="d:\vs code studio\python storage\unnamed (5).jpg" alt="Grilled chicken dish at Trove Coffee" class="gallery-image w-full h-full object-cover aspect-video sm:aspect-square lg:aspect-video" onerror="this.onerror=null;this.src='https://placehold.co/800x400/d7c8b8/4A3728?text=Signature+Dish';">
@@ -524,6 +524,7 @@
                         </div>
                     </form>
                 </div>
+                <!-- This is the message area that will show success or failure -->
                 <div id="message-area" class="hidden mt-6 p-4 rounded-md text-center"></div>
             </div>
         </section>
@@ -689,8 +690,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const reservationData = Object.fromEntries(formData.entries());
 
         try {
-            const response = await fetch('https://trove-coffee-backend.onrender.com/reservations', ...)
-            {
+            // ==================================================================
+            //      >>> CRITICAL: REPLACE THIS WITH YOUR LIVE RENDER URL <<<
+            // ==================================================================
+            const response = await fetch('https://trove-coffee-backend.onrender.com/reservations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(reservationData),
